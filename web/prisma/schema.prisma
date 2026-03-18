@@ -1,0 +1,37 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("ADMIN") // SUPERADMIN, ADMIN, VIEWER
+  createdAt    DateTime @default(now())
+}
+
+model CrawlJob {
+  id          String     @id @default(uuid())
+  url         String
+  depth       Int        @default(0)
+  status      String     @default("QUEUED") // QUEUED, PROCESSING, ACCOMPLISHED, ERROR
+  errorLog    String?
+  rootUrl     String?    // The original root URL that initiated this crawl tree
+  parentId    String?    // Reference to the parent job that discovered this URL
+  parent      CrawlJob?  @relation("JobTree", fields: [parentId], references: [id])
+  children    CrawlJob[] @relation("JobTree")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Setting {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
