@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { crawlQueue } from '@/lib/queue';
+import { crawlQueueMeili, crawlQueuePostgres } from '@/lib/queue';
 
 export async function POST(req: Request) {
   try {
@@ -19,8 +19,12 @@ export async function POST(req: Request) {
       },
     });
 
+    const setting = await prisma.setting.findUnique({ where: { key: 'crawlerSelection' } });
+    const crawlerSelection = setting?.value || 'meilisearch';
+    const targetQueue = crawlerSelection === 'postgres' ? crawlQueuePostgres : crawlQueueMeili;
+
     // Add to BullMQ Queue
-    await crawlQueue.add('crawl', {
+    await targetQueue.add('crawl', {
       jobId: crawlJob.id,
       url,
       depth: crawlJob.depth,

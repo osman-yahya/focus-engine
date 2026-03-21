@@ -35,3 +35,13 @@ model Setting {
   key   String @unique
   value String
 }
+
+model Document {
+  id          String   @id // Uses base64url encoding of the URL as UUID
+  url         String   @unique
+  title       String
+  description String
+  keywords    String
+  textContent String
+  indexedAt   DateTime @default(now())
+}

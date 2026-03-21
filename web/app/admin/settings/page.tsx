@@ -7,6 +7,7 @@ export default function SettingsPage() {
     projectName: 'FocusEngine',
     companyLogo: '',
     pinnedWebsites: '',
+    crawlerSelection: 'meilisearch',
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -83,6 +84,18 @@ export default function SettingsPage() {
             onChange={(e) => setConfig({ ...config, pinnedWebsites: e.target.value })}
             placeholder="https://company.com, https://blog.example.com"
           />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)' }}>Active Crawler</label>
+          <select
+            className="input-field"
+            value={config.crawlerSelection}
+            onChange={(e) => setConfig({ ...config, crawlerSelection: e.target.value })}
+          >
+            <option value="meilisearch">FocusEngine Default Crawler (Meilisearch)</option>
+            <option value="postgres">FocusEngine New Crawler (PostgreSQL)</option>
+          </select>
         </div>
 
         <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '10px' }}>

@@ -37,7 +37,7 @@ model Setting {
 }
 
 model Document {
-  id          String   @id // Uses base64url encoding of the URL as UUID
+  id          String   @id // We will use base64url of the URL as ID, similar to previous Meili ID
   url         String   @unique
   title       String
   description String

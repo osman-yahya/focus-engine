@@ -1,40 +1,21 @@
 import { Worker, Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { PrismaClient } from '@prisma/client';
-import { MeiliSearch } from 'meilisearch';
 import * as cheerio from 'cheerio';
-import { URL } from 'url';
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception in meilisearch crawler:', err);
+  console.error('Uncaught Exception in crawler_new:', err);
 });
 process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled Rejection in meilisearch crawler:', reason);
+  console.error('Unhandled Rejection in crawler_new:', reason);
 });
+import { URL } from 'url';
 
 const prisma = new PrismaClient();
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', { maxRetriesPerRequest: null });
-const meili = new MeiliSearch({
-  host: process.env.MEILISEARCH_HOST || 'http://localhost:7700',
-  apiKey: process.env.MEILI_MASTER_KEY || 'meili_master_key',
-});
 
-const CRAWL_QUEUE_NAME = 'crawlQueue';
+const CRAWL_QUEUE_NAME = 'crawlQueue_postgres';
 const crawlQueue = new Queue(CRAWL_QUEUE_NAME, { connection: connection as any });
-
-async function initMeili() {
-  try {
-    await meili.createIndex('focus_engine_docs', { primaryKey: 'id' });
-    // Update searchable attributes to improve search quality
-    await meili.index('focus_engine_docs').updateSearchableAttributes([
-      'title',
-      'description',
-      'keywords',
-      'textContent'
-    ]);
-  } catch (err) { }
-}
-initMeili();
 
 const worker = new Worker(CRAWL_QUEUE_NAME, async (job) => {
   const { jobId, url, depth } = job.data;
@@ -91,8 +72,26 @@ const worker = new Worker(CRAWL_QUEUE_NAME, async (job) => {
       indexedAt: new Date().toISOString()
     };
 
-    // Push to Meilisearch
-    await meili.index('focus_engine_docs').addDocuments([document]);
+    // Save to PostgreSQL via Prisma
+    await prisma.document.upsert({
+      where: { url: document.url },
+      update: {
+        title: document.title,
+        description: document.description,
+        keywords: document.keywords,
+        textContent: document.textContent,
+        indexedAt: new Date(),
+      },
+      create: {
+        id: document.id,
+        url: document.url,
+        title: document.title,
+        description: document.description,
+        keywords: document.keywords,
+        textContent: document.textContent,
+        indexedAt: new Date(),
+      }
+    });
 
     // Handle Depth Crawling
     if (depth > 0) {
