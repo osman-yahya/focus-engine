@@ -1,0 +1,12 @@
+# PostgreSQL and Meilisearch data volumes — platform-specific binary files, never commit
+data/
+
+# But do track the SQL dump used to seed fresh machines
+!db/init.sql
+
+# Environment files
+.env
+.env.*
+
+# OS
+.DS_Store
