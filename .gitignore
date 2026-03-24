@@ -58,3 +58,11 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Data directories — ignore contents, keep directory structure
+data/**
+!data/
+!data/postgres/
+!data/postgres/.gitkeep
+!data/meili/
+!data/meili/.gitkeep
