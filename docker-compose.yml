@@ -27,10 +27,13 @@ services:
     environment:
       - MEILI_MASTER_KEY=meili_master_key
       - MEILI_NO_ANALYTICS=true
+      - MEILI_IMPORT_DUMP=/dumps/meili.dump
+      - MEILI_IGNORE_DUMP_IF_DB_EXISTS=true
     ports:
       - "7700:7700"
     volumes:
       - ./data/meili:/meili_data
+      - ./db/meili.dump:/dumps/meili.dump:ro
 
   web:
     build:
