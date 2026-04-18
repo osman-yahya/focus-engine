@@ -7,6 +7,18 @@ const meiliClient = new MeiliSearch({
   apiKey: process.env.MEILI_MASTER_KEY || 'meili_master_key',
 });
 
+/**
+ * @route   POST /api/admin/index/bulk-delete
+ * @access  Admin (JWT required)
+ * @desc    Deletes multiple documents from the active search index
+ *          (Meilisearch or PostgreSQL) in a single batch operation.
+ *
+ * @body    { ids: string[] }
+ *
+ * @returns {200} { success: true, deleted: number }
+ * @returns {400} { success: false, error: "No IDs provided" }
+ * @returns {500} { success: false, error: string }
+ */
 export async function POST(req: Request) {
   try {
     const { ids } = await req.json();

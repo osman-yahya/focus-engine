@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { crawlQueueMeili, crawlQueuePostgres } from '@/lib/queue';
 
+/**
+ * @route   POST /api/admin/crawler/add
+ * @access  Admin (JWT required)
+ * @desc    Creates a CrawlJob in the database and dispatches it to the appropriate
+ *          BullMQ queue based on the active crawlerSelection setting.
+ *
+ * @body    { url: string, depth?: number }
+ *
+ * @returns {200} { success: true, jobId: string }
+ * @returns {400} { error: "URL is required" }
+ * @returns {500} { error: string }
+ */
 export async function POST(req: Request) {
   try {
     const { url, depth } = await req.json();

@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+/**
+ * @route   GET /api/admin/settings
+ * @access  Admin (JWT required)
+ * @desc    Retrieves all global settings as a key-value config object.
+ *
+ * @returns {200} { config: Record<string, string> }
+ * @returns {500} { error: "Server error" }
+ */
 export async function GET() {
   try {
     const settings = await prisma.setting.findMany();
@@ -15,6 +23,17 @@ export async function GET() {
   }
 }
 
+/**
+ * @route   POST /api/admin/settings
+ * @access  Admin (JWT required)
+ * @desc    Upserts global settings. Accepts any key-value pairs; each key is
+ *          saved as a separate Setting row via Prisma upsert.
+ *
+ * @body    Record<string, string> — e.g. { projectName: "My Engine", crawlerSelection: "postgres" }
+ *
+ * @returns {200} { success: true }
+ * @returns {500} { error: "Server error" }
+ */
 export async function POST(req: Request) {
   try {
     const data = await req.json();

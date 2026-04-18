@@ -11,13 +11,15 @@ type Job = {
   createdAt: string;
 };
 
-const statusStyle = (status: string) => ({
-  padding: '3px 10px',
-  borderRadius: '999px',
-  fontSize: '0.78rem',
+const statusStyle = (status: string): React.CSSProperties => ({
+  padding: '4px 12px',
+  borderRadius: '9999px',
+  fontSize: '0.72rem',
   fontWeight: 600,
-  background: status === 'QUEUED' ? 'rgba(148,163,184,0.15)' : status === 'PROCESSING' ? 'rgba(59,130,246,0.15)' : status === 'ERROR' ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)',
-  color: status === 'QUEUED' ? '#94a3b8' : status === 'PROCESSING' ? '#60a5fa' : status === 'ERROR' ? '#f87171' : '#4ade80',
+  letterSpacing: '0.03em',
+  background: status === 'QUEUED' ? 'rgba(148,163,184,0.1)' : status === 'PROCESSING' ? 'rgba(96,165,250,0.12)' : status === 'ERROR' ? 'rgba(248,113,113,0.1)' : 'rgba(52,211,153,0.1)',
+  color: status === 'QUEUED' ? '#94a3b8' : status === 'PROCESSING' ? '#60a5fa' : status === 'ERROR' ? '#f87171' : '#34d399',
+  border: `1px solid ${status === 'QUEUED' ? 'rgba(148,163,184,0.15)' : status === 'PROCESSING' ? 'rgba(96,165,250,0.2)' : status === 'ERROR' ? 'rgba(248,113,113,0.2)' : 'rgba(52,211,153,0.2)'}`,
 });
 
 export default function QueuePage() {
@@ -86,70 +88,75 @@ export default function QueuePage() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Crawler Queue</h1>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '4px' }}>Crawler Queue</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Monitor and manage crawl jobs in real-time</p>
+        </div>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
           {STATUSES.map(s => (
             <button key={s} onClick={() => setFilter(s)} style={{
-              padding: '6px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600,
-              background: filter === s ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-              color: filter === s ? '#000' : 'var(--text-muted)',
+              padding: '6px 14px', borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600,
+              background: filter === s ? 'linear-gradient(135deg, var(--accent), #6d28d9)' : 'rgba(124, 58, 237, 0.06)',
+              color: filter === s ? 'white' : 'var(--text-muted)',
+              boxShadow: filter === s ? '0 2px 8px rgba(124, 58, 237, 0.25)' : 'none',
               transition: 'all 0.2s',
+              fontFamily: 'inherit',
             }}>{s}</button>
           ))}
         </div>
       </div>
 
       {selected.size > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', padding: '12px 18px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px' }}>
-          <span style={{ color: '#f87171', fontWeight: 600 }}>{selected.size} item{selected.size > 1 ? 's' : ''} selected</span>
-          <button onClick={deleteSelected} disabled={deleting} style={{ padding: '6px 16px', background: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.4)', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', padding: '12px 18px', background: 'var(--error-surface)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-md)' }}>
+          <span style={{ color: 'var(--error)', fontWeight: 600, fontSize: '0.88rem' }}>{selected.size} item{selected.size > 1 ? 's' : ''} selected</span>
+          <button onClick={deleteSelected} disabled={deleting} style={{ padding: '6px 16px', background: 'rgba(248,113,113,0.15)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 600, fontFamily: 'inherit', fontSize: '0.82rem' }}>
             {deleting ? 'Deleting...' : '🗑 Delete Selected'}
           </button>
-          <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', background: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer' }}>
+          <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', background: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem' }}>
             Clear
           </button>
         </div>
       )}
 
-      <div className="glass-panel" style={{ padding: '4px 0', overflowX: 'auto' }}>
+      <div className="glass-panel" style={{ padding: '2px 0', overflowX: 'auto' }}>
         {loading && jobs.length === 0 ? (
           <p style={{ padding: '24px', color: 'var(--text-muted)' }}>Loading queue...</p>
         ) : filteredJobs.length === 0 ? (
           <p style={{ padding: '24px', color: 'var(--text-muted)' }}>No jobs match the filter.</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <table className="data-table">
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <th style={{ padding: '12px 20px', width: '40px' }}>
-                  <input type="checkbox" checked={allSelected} onChange={toggleAll} style={{ cursor: 'pointer', width: '16px', height: '16px' }} />
+              <tr>
+                <th style={{ width: '40px', paddingLeft: '20px' }}>
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
                 </th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>URL</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Depth</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Status</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Date</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Action</th>
+                <th>URL</th>
+                <th>Depth</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {filteredJobs.map((job) => (
-                <tr key={job.id} style={{ borderTop: '1px solid var(--border-color)', background: selected.has(job.id) ? 'rgba(239,68,68,0.05)' : 'transparent', transition: 'background 0.15s', cursor: 'pointer' }}
+                <tr key={job.id} style={{ background: selected.has(job.id) ? 'var(--error-surface)' : 'transparent', cursor: 'pointer' }}
                   onClick={() => toggleOne(job.id)}>
-                  <td style={{ padding: '12px 20px' }} onClick={e => e.stopPropagation()}>
-                    <input type="checkbox" checked={selected.has(job.id)} onChange={() => toggleOne(job.id)} style={{ cursor: 'pointer', width: '16px', height: '16px' }} />
+                  <td style={{ paddingLeft: '20px' }} onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" checked={selected.has(job.id)} onChange={() => toggleOne(job.id)} style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
                   </td>
-                  <td style={{ padding: '12px 8px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={job.url}>
-                    <a href={job.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: 'var(--accent)', textDecoration: 'none' }}>{job.url}</a>
+                  <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={job.url}>
+                    <a href={job.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: 'var(--accent-light)', textDecoration: 'none', fontSize: '0.88rem' }}>{job.url}</a>
                   </td>
-                  <td style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>{job.depth}</td>
-                  <td style={{ padding: '12px 8px' }}>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>{job.depth}</td>
+                  <td>
                     <div>
                       <span style={statusStyle(job.status)}>{job.status}</span>
-                      {job.errorLog && <div style={{ fontSize: '0.78rem', color: '#f87171', marginTop: '4px' }}>{job.errorLog}</div>}
+                      {job.errorLog && <div style={{ fontSize: '0.75rem', color: 'var(--error)', marginTop: '6px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{job.errorLog}</div>}
                     </div>
                   </td>
-                  <td style={{ padding: '12px 8px', fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(job.createdAt).toLocaleString()}</td>
-                  <td style={{ padding: '12px 8px' }} onClick={e => e.stopPropagation()}>
-                    <button onClick={() => deleteOne(job.id)} style={{ padding: '5px 12px', background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem' }}>Remove</button>
+                  <td style={{ fontSize: '0.82rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(job.createdAt).toLocaleString()}</td>
+                  <td onClick={e => e.stopPropagation()}>
+                    <button onClick={() => deleteOne(job.id)} style={{ padding: '5px 12px', background: 'var(--error-surface)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit' }}>Remove</button>
                   </td>
                 </tr>
               ))}
@@ -157,7 +164,10 @@ export default function QueuePage() {
           </table>
         )}
       </div>
-      <div style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '0.82rem' }}>Auto-refreshes every 5 seconds · {jobs.length} total jobs</div>
+      <div style={{ marginTop: '12px', color: 'var(--text-muted)', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--success)', animation: 'pulse 2s infinite' }} />
+        Auto-refreshes every 5s · {jobs.length} total jobs
+      </div>
     </div>
   );
 }

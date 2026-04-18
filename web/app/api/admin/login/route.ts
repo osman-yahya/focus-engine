@@ -6,6 +6,18 @@ import { SignJWT } from 'jose';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretjwtkey';
 const secret = new TextEncoder().encode(JWT_SECRET);
 
+/**
+ * @route   POST /api/admin/login
+ * @access  Public (excluded from auth middleware)
+ * @desc    Authenticates an admin user and sets an httpOnly JWT cookie.
+ *
+ * @body    { username: string, password: string }
+ *
+ * @returns {200} { success: true } + Sets 'adminToken' cookie (httpOnly, 24h expiry)
+ * @returns {400} { error: "Missing credentials" }
+ * @returns {401} { error: "Invalid credentials" }
+ * @returns {500} { error: "Server error" }
+ */
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();

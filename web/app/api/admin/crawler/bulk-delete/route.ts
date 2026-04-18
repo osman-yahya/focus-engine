@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+/**
+ * @route   POST /api/admin/crawler/bulk-delete
+ * @access  Admin (JWT required)
+ * @desc    Deletes multiple CrawlJobs by their IDs in a single batch operation.
+ *
+ * @body    { ids: string[] } — Array of CrawlJob UUIDs to delete
+ *
+ * @returns {200} { success: true, deleted: number }
+ * @returns {400} { success: false, error: "No IDs provided" }
+ * @returns {500} { success: false, error: string }
+ */
 export async function POST(req: Request) {
   try {
     const { ids } = await req.json();

@@ -83,77 +83,85 @@ export default function SearchIndexPage() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Indexed URLs</h1>
+        <div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '4px' }}>Indexed URLs</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{documents.length} document{documents.length !== 1 ? 's' : ''} in the search index</p>
+        </div>
         <input
           className="input-field"
-          style={{ width: '260px', padding: '8px 14px' }}
-          placeholder="Search index…"
+          style={{ width: '260px', padding: '10px 16px' }}
+          placeholder="🔍 Filter documents…"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
       </div>
 
-      {error && <div style={{ color: '#f87171', marginBottom: '16px' }}>{error}</div>}
+      {error && <div style={{ color: 'var(--error)', marginBottom: '16px', padding: '12px 16px', background: 'var(--error-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--error-border)', fontSize: '0.9rem' }}>{error}</div>}
 
       {selected.size > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', padding: '12px 18px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '12px' }}>
-          <span style={{ color: '#f87171', fontWeight: 600 }}>{selected.size} item{selected.size > 1 ? 's' : ''} selected</span>
-          <button onClick={deleteSelected} disabled={deleting} style={{ padding: '6px 16px', background: 'rgba(239,68,68,0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.35)', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', padding: '12px 18px', background: 'var(--error-surface)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-md)' }}>
+          <span style={{ color: 'var(--error)', fontWeight: 600, fontSize: '0.88rem' }}>{selected.size} item{selected.size > 1 ? 's' : ''} selected</span>
+          <button onClick={deleteSelected} disabled={deleting} style={{ padding: '6px 16px', background: 'rgba(248,113,113,0.15)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 600, fontFamily: 'inherit', fontSize: '0.82rem' }}>
             {deleting ? 'Removing…' : '🗑 Remove Selected'}
           </button>
-          <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', background: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border-color)', borderRadius: '8px', cursor: 'pointer' }}>
+          <button onClick={() => setSelected(new Set())} style={{ padding: '6px 12px', background: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem' }}>
             Clear
           </button>
         </div>
       )}
 
-      <div className="glass-panel" style={{ padding: '4px 0', overflowX: 'auto' }}>
+      <div className="glass-panel" style={{ padding: '2px 0', overflowX: 'auto' }}>
         {filtered.length === 0 ? (
           <p style={{ padding: '24px', color: 'var(--text-muted)' }}>{search ? 'No results match your search.' : 'No documents indexed yet.'}</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <table className="data-table">
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <th style={{ padding: '12px 16px', width: '40px' }}>
-                  <input type="checkbox" checked={allSelected} onChange={toggleAll} style={{ cursor: 'pointer', width: '15px', height: '15px' }} />
+              <tr>
+                <th style={{ width: '40px', paddingLeft: '16px' }}>
+                  <input type="checkbox" checked={allSelected} onChange={toggleAll} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--accent)' }} />
                 </th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>URL</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Title</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Keywords</th>
-                <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Actions</th>
+                <th>URL</th>
+                <th>Title</th>
+                <th>Keywords</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((doc) => (
                 <React.Fragment key={doc.id}>
                   <tr
-                    style={{ borderTop: '1px solid var(--border-color)', cursor: 'pointer', background: selected.has(doc.id) ? 'rgba(239,68,68,0.05)' : expandedRow === doc.id ? 'rgba(255,255,255,0.025)' : 'transparent', transition: 'background 0.15s' }}
+                    style={{ cursor: 'pointer', background: selected.has(doc.id) ? 'var(--error-surface)' : expandedRow === doc.id ? 'var(--bg-hover)' : 'transparent' }}
                     onClick={() => toggleRow(doc.id)}
                   >
-                    <td style={{ padding: '12px 16px' }} onClick={e => e.stopPropagation()}>
-                      <input type="checkbox" checked={selected.has(doc.id)} onChange={() => toggleOne(doc.id)} style={{ cursor: 'pointer', width: '15px', height: '15px' }} />
+                    <td style={{ paddingLeft: '16px' }} onClick={e => e.stopPropagation()}>
+                      <input type="checkbox" checked={selected.has(doc.id)} onChange={() => toggleOne(doc.id)} style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--accent)' }} />
                     </td>
-                    <td style={{ padding: '12px 8px', maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={doc.url}>
-                      <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '0.88rem' }} onClick={e => e.stopPropagation()}>
+                    <td style={{ maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={doc.url}>
+                      <a href={doc.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-light)', textDecoration: 'none', fontSize: '0.85rem' }} onClick={e => e.stopPropagation()}>
                         {doc.url.replace(/^https?:\/\//, '')}
                       </a>
                     </td>
-                    <td style={{ padding: '12px 8px', maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.9rem' }} title={doc.title}>{doc.title}</td>
-                    <td style={{ padding: '12px 8px', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.82rem', color: 'var(--text-muted)' }} title={doc.keywords}>{doc.keywords || '—'}</td>
-                    <td style={{ padding: '12px 8px' }} onClick={e => e.stopPropagation()}>
-                      <button onClick={() => deleteOne(doc.id)} style={{ padding: '5px 12px', background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.82rem' }}>
+                    <td style={{ maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.88rem' }} title={doc.title}>{doc.title}</td>
+                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.8rem', color: 'var(--text-muted)' }} title={doc.keywords}>{doc.keywords || '—'}</td>
+                    <td onClick={e => e.stopPropagation()}>
+                      <button onClick={() => deleteOne(doc.id)} style={{ padding: '5px 12px', background: 'var(--error-surface)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit' }}>
                         Remove
                       </button>
                     </td>
                   </tr>
                   {expandedRow === doc.id && (
-                    <tr style={{ borderTop: '1px solid var(--border-color)', background: 'rgba(0,0,0,0.12)' }}>
-                      <td colSpan={5} style={{ padding: '20px 24px' }}>
-                        <div style={{ marginBottom: '10px' }}><strong>Description:</strong> <span style={{ color: 'var(--text-muted)' }}>{doc.description || 'None found.'}</span></div>
-                        <div style={{ marginBottom: '8px' }}><strong>Content Preview:</strong></div>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.7, background: 'rgba(0,0,0,0.18)', padding: '14px', borderRadius: '8px', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                          {doc.textContent ? doc.textContent.substring(0, 1000) + '…' : 'No content extracted.'}
-                        </p>
+                    <tr style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                      <td colSpan={5} style={{ padding: '20px 24px', background: 'rgba(124, 58, 237, 0.02)' }}>
+                        <div style={{ marginBottom: '12px' }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Description</span>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: '4px' }}>{doc.description || 'None found.'}</p>
+                        </div>
+                        <div>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Content Preview</span>
+                          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.7, background: 'rgba(0,0,0,0.2)', padding: '14px', borderRadius: 'var(--radius-sm)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginTop: '6px', border: '1px solid var(--border-subtle)' }}>
+                            {doc.textContent ? doc.textContent.substring(0, 1000) + '…' : 'No content extracted.'}
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -163,7 +171,6 @@ export default function SearchIndexPage() {
           </table>
         )}
       </div>
-      <div style={{ marginTop: '10px', color: 'var(--text-muted)', fontSize: '0.82rem' }}>{documents.length} total document{documents.length !== 1 ? 's' : ''} in index</div>
     </div>
   );
 }

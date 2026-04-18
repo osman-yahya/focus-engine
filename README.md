@@ -1,100 +1,102 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/FocusEngine-Self--Hosted%20Search-2563eb?style=for-the-badge&logo=searxng&logoColor=white" alt="FocusEngine"/>
-  <br/>
-  <em>Your data. Your index. Your search.</em>
+  <img src="https://img.shields.io/badge/FocusEngine-Self--Hosted%20Search-0a1628?style=for-the-badge&logo=searchenginepng&logoColor=7cb8ff" alt="FocusEngine"/>
+  <br/><br/>
+  <strong>Index your own web. Search it privately.</strong><br/>
+  <em>No third-party APIs. No telemetry. No cloud dependency.</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/osman-yahya/focus-engine/stargazers"><img src="https://img.shields.io/github/stars/osman-yahya/focus-engine?style=flat-square&color=2563eb" alt="Stars"/></a>
-  <a href="https://github.com/osman-yahya/focus-engine/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="MIT License"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/docker-ready-0db7ed?style=flat-square&logo=docker&logoColor=white" alt="Docker"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=nextdotjs" alt="Next.js"/></a>
-  <a href="#"><img src="https://img.shields.io/badge/Meilisearch-powered-ff5caa?style=flat-square&logo=meilisearch&logoColor=white" alt="Meilisearch"/></a>
+  <a href="https://github.com/osman-yahya/focus-engine/stargazers"><img src="https://img.shields.io/github/stars/osman-yahya/focus-engine?style=flat-square&color=0a1628&labelColor=0d1a30" alt="Stars"/></a>
+  <a href="https://github.com/osman-yahya/focus-engine/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square&labelColor=0d1a30" alt="MIT License"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/docker-ready-0db7ed?style=flat-square&logo=docker&logoColor=white&labelColor=0d1a30" alt="Docker"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Next.js-14+-white?style=flat-square&logo=nextdotjs&labelColor=0d1a30" alt="Next.js"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/Meilisearch-powered-ff5caa?style=flat-square&logo=meilisearch&logoColor=white&labelColor=0d1a30" alt="Meilisearch"/></a>
 </p>
 
 ---
 
-**FocusEngine** is a fully self-hosted, privacy-first internal search engine designed for **companies, teams, and privacy-conscious individuals** who need to index and search their own chosen set of websites — without sending a single query to Google, Bing, or any third party.
+## What is FocusEngine?
+
+FocusEngine is a **fully self-hosted, privacy-first search engine** for companies, teams, and individuals. Point it at your chosen websites, it crawls and indexes them, and your team searches locally — with **zero queries leaving your network**.
 
 You own the index. You own the queries. You own the data.
 
 ---
 
-## ✨ Features
+## ⚡ Features
 
-| Feature | Description |
-|---|---|
-| 🔍 **Private Search** | All queries stay on your server — zero external tracking |
-| 🕷️ **Async Crawler** | BullMQ-powered web crawler with configurable depth limits |
-| 🌳 **Crawl Tree** | Parent↔child URL tracking — see exactly which pages were discovered from which |
-| 🔑 **Admin Panel** | Full management UI for admins, queue, indexed content and settings |
-| 👥 **User Management** | Multi-admin support with role-based access (`SUPERADMIN`, `ADMIN`, `VIEWER`) |
-| 📌 **Pinned Sites** | Curate quick-access tiles on the search homepage for your team |
-| 🎯 **Sitelinks** | Results grouped by domain with sub-page sitelinks, just like Google |
-| ⚡ **Autocomplete** | Real-time search with 300ms debounce as you type |
-| 🛠️ **Docker-first** | One command to start everything — no manual dependency setup |
-| 🔐 **JWT Auth** | Secure cookie-based authentication for the admin panel |
+| | Feature | Details |
+|---|---|---|
+| 🔒 | **Zero-Telemetry Search** | Every query stays on your server — no trackers, no third-party calls |
+| 🕷️ | **Async Web Crawler** | BullMQ-powered, configurable depth, parent↔child tree tracking |
+| 🖥️ | **Admin Dashboard** | Manage admins, monitor crawler queue, browse indexed content, configure settings |
+| 👥 | **Multi-Admin RBAC** | `SUPERADMIN` · `ADMIN` · `VIEWER` role hierarchy with JWT auth |
+| 📌 | **Pinned Sites** | Curate quick-access tiles on the search homepage |
+| 🎯 | **Sitelinks** | Google-style domain grouping with sub-page links |
+| ⚡ | **Live Search** | Real-time results with 300ms debounced autocomplete |
+| 🌑 | **3D Dark UI** | Particle-field background, glassmorphic dark panels, smooth animations |
+| 🐳 | **Docker-First** | One command to start five services |
 
 ---
 
 ## 🏛️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          Docker Compose                         │
-│                                                                 │
-│  ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐  │
-│  │  Next.js App │   │   Crawler    │   │    Meilisearch     │  │
-│  │  (Web + API) │   │   Worker     │   │  (Search Index)    │  │
-│  │  :3000       │   │  (BullMQ)    │   │  :7700             │  │
-│  └──────┬───────┘   └──────┬───────┘   └────────────────────┘  │
-│         │                  │                                     │
-│  ┌──────▼───────────────────▼───────┐   ┌────────────────────┐  │
-│  │           PostgreSQL             │   │       Redis        │  │
-│  │       (Jobs + Settings)          │   │   (Job Queue)      │  │
-│  └──────────────────────────────────┘   └────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                      Docker Compose                          │
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │  Next.js App │  │   Crawler    │  │   Meilisearch    │   │
+│  │  (Web + API) │  │   Worker     │  │  (Search Index)  │   │
+│  │  :3000       │  │  (BullMQ)    │  │  :7700           │   │
+│  └──────┬───────┘  └──────┬───────┘  └──────────────────┘   │
+│         │                 │                                   │
+│  ┌──────▼─────────────────▼──────┐  ┌──────────────────┐    │
+│  │         PostgreSQL            │  │      Redis       │    │
+│  │     (Jobs + Settings)         │  │   (Job Queue)    │    │
+│  └───────────────────────────────┘  └──────────────────┘    │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-**Stack:**
-- **Frontend & API:** Next.js 16, Vanilla CSS, Outfit (Google Font)
-- **Crawler Worker:** Node.js + Cheerio + BullMQ
-- **Database:** PostgreSQL via Prisma ORM
-- **Queue Broker:** Redis
-- **Search Index:** Meilisearch
-- **Auth:** JWT + HTTP-only cookies
+| Layer | Technology |
+|---|---|
+| **Frontend & API** | Next.js 14+, React, Vanilla CSS, Inter font |
+| **Crawler** | Node.js + Cheerio + BullMQ |
+| **Database** | PostgreSQL via Prisma ORM |
+| **Queue** | Redis |
+| **Search** | Meilisearch |
+| **Auth** | JWT + HTTP-only cookies |
 
 ---
 
 ## 🚀 Quick Start
 
-**Prerequisites:** Docker + Docker Compose installed.
+> **Prerequisites:** Docker & Docker Compose
 
 ```bash
-# 1. Clone the repo
+# Clone
 git clone https://github.com/osman-yahya/focus-engine.git
 cd focus-engine
 
-# 2. Copy environment file and adjust if needed
-cp .env.example .env
+# Configure
+cp .env.example .env          # edit .env as needed
 
-# 3. Start everything
+# Launch
 docker-compose up -d --build
 
-# 4. Apply the database schema (first run only)
+# Initialize database (first run only)
 docker exec focus-engine-web npx prisma db push
 
-# 5. Create your first admin account
-# Visit: http://localhost:3000/admin/setup
+# Create your first admin → http://localhost:3000/admin/setup
 ```
 
-Open **[http://localhost:3000](http://localhost:3000)** and start searching. 🎉
+Open **[http://localhost:3000](http://localhost:3000)** — you're live. 🎉
 
 ---
 
 ## ⚙️ Environment Variables
 
-Create a `.env` file at the project root. A minimal setup:
+Create `.env` at the project root:
 
 ```env
 # Database
@@ -105,34 +107,37 @@ REDIS_URL=redis://redis:6379
 
 # Meilisearch
 MEILISEARCH_HOST=http://meilisearch:7700
-MEILI_MASTER_KEY=meili_master_key
+MEILI_MASTER_KEY=meili_master_key          # ⚠ change in production
 
-# Auth (change this in production!)
-JWT_SECRET=change_me_in_production
+# Auth
+JWT_SECRET=change_me_in_production          # ⚠ change in production
 ```
 
 ---
 
 ## 📖 Usage
 
-### 1. Admin Setup
+### 1 → Setup
 
-Visit `/admin/setup` on first launch to create your superadmin account.
+Visit `/admin/setup` on first launch to create the superadmin account.
+default admin credentials for preset db is : "admin" "admin"
+### 2 → Crawl
 
-### 2. Add URLs to Crawl
+Navigate to **Admin → Dashboard**, enter a URL and depth:
 
-Navigate to **Admin → Dashboard**, enter a URL and set the crawl depth:
-- `Depth 0` — index only the exact URL entered
-- `Depth 1` — index the URL + all linked pages on the same domain
-- `Depth 2+` — recursively follow links up to N levels deep
+| Depth | Behaviour |
+|---|---|
+| `0` | Index only the exact URL |
+| `1` | Index URL + all same-domain links |
+| `2+` | Recursively follow links N levels deep |
 
-### 3. Monitor the Queue
+### 3 → Monitor
 
-Go to **Admin → Crawler Queue** to watch jobs in real time. Filter by status, select multiple jobs and bulk-delete them.
+**Admin → Queue** — watch crawl jobs in real time, filter by status, bulk-delete.
 
-### 4. Search
+### 4 → Search
 
-Visit the homepage and start typing. Results are grouped by domain with sitelinks for sub-pages.
+Go to the homepage and type. Results stream in with domain grouping and sitelinks.
 
 ---
 
@@ -140,48 +145,46 @@ Visit the homepage and start typing. Results are grouped by domain with sitelink
 
 ```
 focus-engine/
-├── web/                  # Next.js application (UI + API routes)
+├── web/                      # Next.js (UI + API)
 │   ├── app/
-│   │   ├── page.tsx      # Public search homepage
-│   │   ├── admin/        # Admin panel pages
-│   │   └── api/          # REST API routes
-│   ├── components/       # React components
-│   ├── lib/              # Prisma, Meilisearch, BullMQ clients
-│   └── prisma/           # Database schema
+│   │   ├── page.tsx          # Public search page
+│   │   ├── admin/            # Admin panel (7 pages)
+│   │   └── api/              # REST API routes (10 endpoints)
+│   ├── components/           # SearchEngineUI + shared
+│   ├── lib/                  # Prisma, Meilisearch, BullMQ clients
+│   └── prisma/               # Database schema
 │
-├── crawler/              # Standalone crawler worker
-│   └── index.ts          # BullMQ worker + Cheerio scraper
+├── crawler/                  # Standalone BullMQ worker
+│   └── index.ts              # Cheerio scraper
 │
-└── docker-compose.yml    # Full stack orchestration
+├── agents/                   # AI agent team definitions
+│
+└── docker-compose.yml        # Full-stack orchestration
 ```
 
 ---
 
-## 🔒 Privacy & Security Notes
+## 🔒 Security & Privacy
 
-- **No telemetry.** FocusEngine never phones home. All data — URLs, queries, indexed content — stays on your infrastructure.
-- **Air-gapped friendly.** Can run entirely offline on a private network. Just point your crawler at internal URLs.
-- **Change defaults in production.** Set strong values for `JWT_SECRET` and `MEILI_MASTER_KEY` before exposing to the internet.
-- **Firewall Meilisearch.** The Meilisearch port (`:7700`) should not be publicly exposed. It is only used internally by the web and crawler containers.
+- **No telemetry** — FocusEngine never phones home. All data stays on your infrastructure.
+- **Air-gap friendly** — runs fully offline on a private network.
+- **Change defaults** — set strong `JWT_SECRET` and `MEILI_MASTER_KEY` before deploying.
+- **Firewall Meilisearch** — port `:7700` should not be publicly exposed; it's internal-only.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, bug reports, and feature requests are welcome!
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'feat: add my feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a Pull Request
+1. Fork the repo
+2. `git checkout -b feature/my-feature`
+3. `git commit -m 'feat: add my feature'`
+4. `git push origin feature/my-feature`
+5. Open a PR
 
 ---
 
 ## 📄 License
 
-MIT © [osman-yahya](https://github.com/osman-yahya). Free to use, modify and self-host.
+MIT © [osman-yahya](https://github.com/osman-yahya)
 
----
-
-<p align="center">Made with ❤️ for privacy.</p>
+<p align="center"><sub>Built for privacy. Designed for speed.</sub></p>

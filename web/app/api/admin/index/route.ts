@@ -9,6 +9,15 @@ const meiliClient = new MeiliSearch({
 
 export const dynamic = "force-dynamic";
 
+/**
+ * @route   GET /api/admin/index
+ * @access  Admin (JWT required)
+ * @desc    Retrieves indexed documents from either Meilisearch or PostgreSQL
+ *          depending on the active crawlerSelection setting.
+ *
+ * @returns {200} { success: true, documents: Array<{ id, url, title, description, keywords, textContent }> }
+ * @returns {500} { success: false, error: string }
+ */
 export async function GET() {
   try {
     const setting = await prisma.setting.findUnique({ where: { key: 'crawlerSelection' } });
@@ -30,6 +39,16 @@ export async function GET() {
   }
 }
 
+/**
+ * @route   DELETE /api/admin/index
+ * @access  Admin (JWT required)
+ * @desc    Deletes a single document from the active search index (Meilisearch or PostgreSQL).
+ *
+ * @body    { id: string }
+ *
+ * @returns {200} { success: true }
+ * @returns {500} { success: false, error: string }
+ */
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();

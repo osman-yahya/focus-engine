@@ -4,6 +4,14 @@ import bcrypt from 'bcryptjs';
 
 export const dynamic = "force-dynamic";
 
+/**
+ * @route   GET /api/admin/users
+ * @access  Admin (JWT required)
+ * @desc    Lists all admin users with id, username, role, and createdAt.
+ *
+ * @returns {200} { success: true, admins: Array<{ id, username, role, createdAt }> }
+ * @returns {500} { success: false, error: string }
+ */
 export async function GET() {
   try {
     const admins = await prisma.admin.findMany({
@@ -16,6 +24,17 @@ export async function GET() {
   }
 }
 
+/**
+ * @route   POST /api/admin/users
+ * @access  Admin (JWT required)
+ * @desc    Creates a new admin user with a hashed password.
+ *
+ * @body    { username: string, password: string, role?: "SUPERADMIN" | "ADMIN" | "VIEWER" }
+ *
+ * @returns {200} { success: true, admin: { id, username, role } }
+ * @returns {400} { success: false, error: "Username already exists" | "Username and password are required" }
+ * @returns {500} { success: false, error: string }
+ */
 export async function POST(req: Request) {
   try {
     const { username, password, role } = await req.json();
@@ -35,6 +54,16 @@ export async function POST(req: Request) {
   }
 }
 
+/**
+ * @route   PATCH /api/admin/users
+ * @access  Admin (JWT required)
+ * @desc    Updates the role of an existing admin user.
+ *
+ * @body    { id: string, role: "SUPERADMIN" | "ADMIN" | "VIEWER" }
+ *
+ * @returns {200} { success: true, admin: { id, username, role } }
+ * @returns {500} { success: false, error: string }
+ */
 export async function PATCH(req: Request) {
   try {
     const { id, role } = await req.json();
@@ -48,6 +77,17 @@ export async function PATCH(req: Request) {
   }
 }
 
+/**
+ * @route   DELETE /api/admin/users
+ * @access  Admin (JWT required)
+ * @desc    Deletes an admin user. Prevents deletion of the last remaining admin.
+ *
+ * @body    { id: string }
+ *
+ * @returns {200} { success: true }
+ * @returns {400} { success: false, error: "Cannot delete the only admin" }
+ * @returns {500} { success: false, error: string }
+ */
 export async function DELETE(req: Request) {
   try {
     const { id } = await req.json();

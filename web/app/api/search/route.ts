@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { meiliClient } from '@/lib/meilisearch';
 import { rerank, SearchHit } from '@/lib/scoring';
 
+/**
+ * @route   GET /api/search
+ * @access  Public
+ * @desc    Search the FocusEngine index using Meilisearch with custom re-ranking.
+ *
+ * @query   {string} q - The search query string (required)
+ *
+ * @returns {200} { hits: Array<{ id, title, url, description }> }
+ *          Returns up to 50 re-ranked results. Empty array if no query or no matches.
+ * @returns {500} { error: "Search failed" }
+ *          Returned on unexpected server errors (excludes index_not_found which returns empty hits).
+ */
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

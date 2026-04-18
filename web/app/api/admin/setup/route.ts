@@ -2,6 +2,18 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 
+/**
+ * @route   POST /api/admin/setup
+ * @access  Public (excluded from auth middleware)
+ * @desc    First-time setup — creates the initial superadmin account.
+ *          Rejects if any admin already exists in the database.
+ *
+ * @body    { username: string, password: string }
+ *
+ * @returns {200} { success: true, adminId: string }
+ * @returns {400} { error: "Admin already initialized" | "Missing username or password" }
+ * @returns {500} { error: "Server error" }
+ */
 export async function POST(req: Request) {
   try {
     const adminCount = await prisma.admin.count();

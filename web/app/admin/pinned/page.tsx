@@ -78,52 +78,59 @@ export default function PinnedSitesPage() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Pinned Sites</h1>
-          <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '0.9rem' }}>These appear as quick-access tiles on the user search homepage.</p>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '4px' }}>Pinned Sites</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Quick-access tiles shown on the user search homepage</p>
         </div>
-        {saving && <span style={{ color: 'var(--accent)', fontSize: '0.9rem' }}>Saving…</span>}
-        {message && <span style={{ color: '#4ade80', fontSize: '0.9rem' }}>{message}</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {saving && <span style={{ color: 'var(--accent-light)', fontSize: '0.82rem', animation: 'pulse 1s infinite' }}>Saving…</span>}
+          {message && <span style={{ color: 'var(--success)', fontSize: '0.82rem' }}>✓ {message}</span>}
+        </div>
       </div>
 
-      {/* Add new pin form */}
-      <form onSubmit={addPin} className="glass-panel" style={{ padding: '20px 24px', marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+      {/* Add form */}
+      <form onSubmit={addPin} className="glass-panel" style={{ padding: '22px 24px', marginBottom: '24px', display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div style={{ flex: 2, minWidth: '200px' }}>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>URL *</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 500 }}>URL *</label>
           <input className="input-field" required value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://yourcompany.com" />
         </div>
         <div style={{ flex: 1, minWidth: '160px' }}>
-          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>Label (optional)</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 500 }}>Label (optional)</label>
           <input className="input-field" value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder="Company Portal" />
         </div>
-        <button type="submit" style={{ padding: '12px 22px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+        <button type="submit" style={{ padding: '12px 22px', background: 'linear-gradient(135deg, var(--accent), #6d28d9)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)', transition: 'var(--transition)' }}>
           + Add Site
         </button>
       </form>
 
-      {/* Grid of pinned cards */}
+      {/* Grid */}
       {loading ? (
         <p style={{ color: 'var(--text-muted)' }}>Loading…</p>
       ) : pins.length === 0 ? (
-        <div className="glass-panel" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <div className="glass-panel" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '12px', opacity: 0.5 }}>📌</div>
           No pinned sites yet. Add your first one above!
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '14px' }}>
           {pins.map((pin, i) => (
-            <div key={i} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px', position: 'relative', overflow: 'hidden' }}>
-              <button onClick={() => removePin(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(239,68,68,0.15)', color: '#f87171', border: 'none', borderRadius: '6px', cursor: 'pointer', width: '24px', height: '24px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Remove">✕</button>
+            <div key={i} className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', overflow: 'hidden' }}>
+              <button onClick={() => removePin(i)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'var(--error-surface)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: '6px', cursor: 'pointer', width: '24px', height: '24px', fontSize: '0.7rem', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'var(--transition-fast)', fontFamily: 'inherit' }} title="Remove"
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(248,113,113,0.2)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'var(--error-surface)'}>✕</button>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'var(--accent-surface)', border: '1px solid rgba(124, 58, 237, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {getFavicon(pin.url) ? (
                     <img src={getFavicon(pin.url)!} width={20} height={20} alt="" style={{ borderRadius: '4px' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   ) : <span>🌐</span>}
                 </div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.92rem' }}>{pin.label}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>{pin.url.replace(/^https?:\/\//, '')}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{pin.label}</div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px' }}>{pin.url.replace(/^https?:\/\//, '')}</div>
                 </div>
               </div>
-              <a href={pin.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.78rem', color: 'var(--accent)', textDecoration: 'none' }}>↗ Visit Site</a>
+              <a href={pin.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.78rem', color: 'var(--accent-light)', textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#c4b5fd'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--accent-light)'}>↗ Visit Site</a>
             </div>
           ))}
         </div>

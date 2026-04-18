@@ -11,15 +11,19 @@ type Admin = {
 
 const ROLES = ['SUPERADMIN', 'ADMIN', 'VIEWER'];
 
-const roleBadgeStyle = (role: string) => ({
-  padding: '3px 10px',
-  borderRadius: '999px',
-  fontSize: '0.78rem',
+const roleBadgeStyle = (role: string): React.CSSProperties => ({
+  padding: '4px 12px',
+  borderRadius: '9999px',
+  fontSize: '0.72rem',
   fontWeight: 600,
-  background: role === 'SUPERADMIN' ? 'rgba(168,85,247,0.18)' : role === 'ADMIN' ? 'rgba(34,211,238,0.15)' : 'rgba(148,163,184,0.15)',
-  color: role === 'SUPERADMIN' ? '#c084fc' : role === 'ADMIN' ? '#22d3ee' : '#94a3b8',
-  border: `1px solid ${role === 'SUPERADMIN' ? 'rgba(168,85,247,0.3)' : role === 'ADMIN' ? 'rgba(34,211,238,0.25)' : 'rgba(148,163,184,0.2)'}`,
+  letterSpacing: '0.03em',
+  background: role === 'SUPERADMIN' ? 'rgba(124,58,237,0.12)' : role === 'ADMIN' ? 'rgba(96,165,250,0.12)' : 'rgba(148,163,184,0.1)',
+  color: role === 'SUPERADMIN' ? '#a78bfa' : role === 'ADMIN' ? '#60a5fa' : '#94a3b8',
+  border: `1px solid ${role === 'SUPERADMIN' ? 'rgba(124,58,237,0.2)' : role === 'ADMIN' ? 'rgba(96,165,250,0.2)' : 'rgba(148,163,184,0.15)'}`,
 });
+
+const avatarGradient = (role: string) =>
+  role === 'SUPERADMIN' ? 'linear-gradient(135deg, #7c3aed, #a78bfa)' : role === 'ADMIN' ? 'linear-gradient(135deg, #3b82f6, #60a5fa)' : 'linear-gradient(135deg, #64748b, #94a3b8)';
 
 export default function UsersPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -85,85 +89,85 @@ export default function UsersPage() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Admin Users</h1>
+        <div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '4px' }}>Admin Users</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{admins.length} registered administrator{admins.length !== 1 ? 's' : ''}</p>
+        </div>
         <button
           onClick={() => setShowAdd(!showAdd)}
-          style={{ padding: '10px 22px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}
+          style={{ padding: '10px 22px', background: showAdd ? 'var(--error-surface)' : 'linear-gradient(135deg, var(--accent), #6d28d9)', color: showAdd ? 'var(--error)' : 'white', border: showAdd ? '1px solid var(--error-border)' : 'none', borderRadius: 'var(--radius-sm)', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem', transition: 'var(--transition)', fontFamily: 'inherit', boxShadow: showAdd ? 'none' : '0 4px 12px rgba(124, 58, 237, 0.25)' }}
         >
           {showAdd ? '✕ Cancel' : '+ Add Admin'}
         </button>
       </div>
 
-      {error && <div style={{ color: '#f87171', marginBottom: '16px' }}>{error}</div>}
+      {error && <div style={{ color: 'var(--error)', marginBottom: '16px', padding: '12px 16px', background: 'var(--error-surface)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--error-border)', fontSize: '0.9rem' }}>{error}</div>}
 
       {showAdd && (
         <form onSubmit={handleAdd} className="glass-panel" style={{ padding: '24px', marginBottom: '24px', display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <div style={{ flex: 1, minWidth: '160px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Username</label>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 500 }}>Username</label>
             <input className="input-field" required value={newUser.username} onChange={e => setNewUser({ ...newUser, username: e.target.value })} placeholder="john_doe" />
           </div>
           <div style={{ flex: 1, minWidth: '160px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Password</label>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 500 }}>Password</label>
             <input type="password" className="input-field" required value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} placeholder="••••••••" />
           </div>
           <div style={{ minWidth: '140px' }}>
-            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Role</label>
-            <select className="input-field" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })} style={{ cursor: 'pointer' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: 500 }}>Role</label>
+            <select className="input-field" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
               {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
-          <button type="submit" disabled={adding} style={{ padding: '12px 24px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+          <button type="submit" disabled={adding} style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--accent), #6d28d9)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)', transition: 'var(--transition)' }}>
             {adding ? 'Adding...' : 'Create User'}
           </button>
-          {addError && <div style={{ width: '100%', color: '#f87171', fontSize: '0.9rem' }}>{addError}</div>}
+          {addError && <div style={{ width: '100%', color: 'var(--error)', fontSize: '0.85rem' }}>{addError}</div>}
         </form>
       )}
 
-      <div className="glass-panel" style={{ padding: '4px 0', overflow: 'hidden' }}>
+      <div className="glass-panel" style={{ padding: '2px 0', overflow: 'hidden' }}>
         {loading ? (
           <p style={{ padding: '24px', color: 'var(--text-muted)' }}>Loading...</p>
         ) : admins.length === 0 ? (
           <p style={{ padding: '24px', color: 'var(--text-muted)' }}>No admins found.</p>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <table className="data-table">
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <th style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Username</th>
-                <th style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Role</th>
-                <th style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Created</th>
-                <th style={{ padding: '14px 20px', color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem' }}>Actions</th>
+              <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {admins.map((admin) => (
-                <tr key={admin.id} style={{ borderTop: '1px solid var(--border-color)', transition: 'background 0.15s' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <td style={{ padding: '16px 20px', fontWeight: 500 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', color: '#000', flexShrink: 0 }}>
+                <tr key={admin.id}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: avatarGradient(admin.role), display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.85rem', color: 'white', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
                         {admin.username[0].toUpperCase()}
                       </div>
-                      {admin.username}
+                      <span style={{ fontWeight: 500 }}>{admin.username}</span>
                     </div>
                   </td>
-                  <td style={{ padding: '16px 20px' }}>
+                  <td>
                     <select
                       value={admin.role}
                       onChange={e => handleRoleChange(admin.id, e.target.value)}
-                      style={{ ...roleBadgeStyle(admin.role), background: 'transparent', border: 'none', cursor: 'pointer', outline: 'none', fontSize: '0.8rem' }}
+                      style={{ ...roleBadgeStyle(admin.role), cursor: 'pointer', outline: 'none', fontFamily: 'inherit' }}
                     >
-                      {ROLES.map(r => <option key={r} value={r} style={{ background: '#1a1a1a', color: '#fff' }}>{r}</option>)}
+                      {ROLES.map(r => <option key={r} value={r} style={{ background: '#0f1425', color: '#e8eaf0' }}>{r}</option>)}
                     </select>
                   </td>
-                  <td style={{ padding: '16px 20px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
                     {new Date(admin.createdAt).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: '16px 20px' }}>
+                  <td>
                     <button
                       onClick={() => handleDelete(admin.id, admin.username)}
-                      style={{ padding: '6px 14px', background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
+                      style={{ padding: '6px 14px', background: 'var(--error-surface)', color: 'var(--error)', border: '1px solid var(--error-border)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.82rem', fontFamily: 'inherit', transition: 'var(--transition-fast)' }}
                     >
                       Delete
                     </button>
